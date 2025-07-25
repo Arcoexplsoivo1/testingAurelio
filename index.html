@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>México Armentista</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(45deg, #f5a8a8, #fb8c8c, #b71d1d, #ed3a3a);
+            background-size: 400% 400%;
+            animation: techGradient 15s ease infinite;
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        @keyframes techGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Electron Network Background */
+        .atoms-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .electron {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #9d2449, #AF272F);
+            box-shadow: 0 0 10px #9d2449, 0 0 20px #AF272F, 0 0 30px rgba(157, 36, 73, 0.3);
+            animation: electronFloat 20s infinite linear;
+        }
+
+        .electron.pulse {
+            animation: electronFloat 20s infinite linear, electronPulse 2s infinite ease-in-out;
+        }
+
+        .connection-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(157, 36, 73, 0.6), 
+                rgba(175, 39, 47, 0.8), 
+                rgba(157, 36, 73, 0.6), 
+                transparent
+            );
+            opacity: 0;
+            animation: connectionPulse 4s infinite ease-in-out;
+            transform-origin: left center;
+        }
+
+        .network-node {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #9d2449, #AF272F);
+            box-shadow: 0 0 15px #9d2449, 0 0 25px #AF272F;
+            animation: nodePulse 3s infinite ease-in-out;
+        }
+
+        .data-packet {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #9d2449;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #9d2449;
+            animation: dataFlow 8s infinite linear;
+        }
+
+        @keyframes electronFloat {
+            0% {
+                transform: translate(0, 100vh) rotate(0deg);
+                opacity: 0;
+            }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% {
+                transform: translate(100vw, -50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes electronPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 10px #9d2449, 0 0 20px #AF272F, 0 0 30px rgba(157, 36, 73, 0.3);
+            }
+            50% {
+                transform: scale(1.5);
+                box-shadow: 0 0 20px #9d2449, 0 0 40px #AF272F, 0 0 60px rgba(157, 36, 73, 0.5);
+            }
+        }
+
+        @keyframes connectionPulse {
+            0%, 100% { 
+                opacity: 0; 
+                transform: scaleX(0);
+            }
+            50% { 
+                opacity: 0.8; 
+                transform: scaleX(1);
+            }
+        }
+
+        @keyframes nodePulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+        }
+
+        @keyframes dataFlow {
+            0% {
+                transform: translateX(0) translateY(0);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateX(200px) translateY(-100px);
+                opacity: 0;
+            }
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .logo::before {
+            content: "★";
+            margin-right: 8px;
+            color: #666;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero Carousel */
+        .hero-carousel {
+            background: linear-gradient(135deg, #8b94a8 0%, #6b7280 100%);
+            border-radius: 20px;
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+            margin-bottom: 60px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .hero-slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(139, 148, 168, 0.8) 0%, rgba(107, 114, 128, 0.8) 100%);
+            z-index: 1;
+        }
+
+        .hero-content,
+        .hero-graphic {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .hero-slide.prev {
+            transform: translateX(-100%);
+        }
+
+        .hero-content {
+            flex: 1;
+            color: white;
+            max-width: 500px;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .hero-btn {
+            background: #333;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero-btn:hover {
+            background: #555;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .hero-graphic {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .mountain-graphic {
+            width: 300px;
+            height: 200px;
+            position: relative;
+        }
+
+        .mountain {
+            position: absolute;
+            bottom: 0;
+            background: white;
+            clip-path: polygon(0 100%, 50% 0, 100% 100%);
+        }
+
+        .mountain-1 {
+            left: 0;
+            width: 150px;
+            height: 120px;
+            opacity: 0.9;
+        }
+
+        .mountain-2 {
+            right: 0;
+            width: 180px;
+            height: 150px;
+        }
+
+        .sun {
+            position: absolute;
+            top: 20px;
+            right: 50px;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+
+        .hero-indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .hero-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .hero-indicator.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        /* Content Section */
+        .content-section {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            margin-bottom: 80px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 40px;
+            border: 1px solid rgba(157, 36, 73, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-image {
+            flex: 0 0 300px;
+            height: 200px;
+            background: linear-gradient(135deg, #8b94a8 0%, #6b7280 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .content-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .content-slide.active {
+            opacity: 1;
+        }
+
+        .content-nav {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .content-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .content-indicator.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        .image-placeholder {
+            color: white;
+            font-size: 4rem;
+            opacity: 0.7;
+        }
+
+        .content-text {
+            flex: 1;
+        }
+
+        .content-text h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .content-text p {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        /* Community Section */
+        .community-section {
+            margin-bottom: 80px;
+        }
+
+        .community-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .community-header h2 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .community-carousel {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .community-track {
+            display: flex;
+            transition: transform 0.5s ease;
+            gap: 30px;
+        }
+
+        .community-card {
+            flex: 0 0 calc(33.333% - 20px);
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .community-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card-image {
+            height: 200px;
+            background: linear-gradient(135deg, #a8b4c8 0%, #8b94a8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow: hidden;
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-location {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .card-btn {
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .card-btn:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+
+        .carousel-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .nav-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: #333;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: #555;
+            transform: scale(1.1);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Video Section */
+        .video-section {
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .video-container {
+            position: relative;
+            max-width: 800px;
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .video-container video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .video-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 30px;
+            color: white;
+            text-align: center;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .video-container:hover .video-overlay {
+            transform: translateY(0);
+        }
+
+        .video-overlay h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .video-overlay p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        .footer {
+            background: linear-gradient(135deg, #8b94a8 0%, #6b7280 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            margin-top: 80px;
+        }
+
+        .footer h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .footer h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 40px;
+        }
+
+        .footer-images {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-image {
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .footer-image:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-slide {
+                flex-direction: column;
+                text-align: center;
+                padding: 40px 20px;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .content-section {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .content-image {
+                flex: none;
+                width: 100%;
+            }
+
+            .community-card {
+                flex: 0 0 calc(50% - 15px);
+            }
+
+            .footer-images {
+                gap: 15px;
+            }
+
+            .footer-image {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .community-card {
+                flex: 0 0 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Atoms Background -->
+    <div class="atoms-container" id="atomsContainer"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">MEXICO ARMENTISTA</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#equipos">Equipos</a></li>
+                <li><a href="#faenas">Faenas</a></li>
+                <li><a href="#mapa">Mapa</a></li>
+                <li><a href="#pueblo">Por Amor A Puebla</a></li>
+                <li><a href="#unete">Únete</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Hero Carousel -->
+        <div class="hero-carousel">
+            <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1518837695005-2083093ee35b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');">
+                <div class="hero-content">
+                    <h1>Mexico<br>Armentista</h1>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sapien, est felis, sagittis viverra nulla mattis scelerisque. Eget duis integer.</p>
+                    <button class="hero-btn">BOTÓN</button>
+                </div>
+                <div class="hero-graphic">
+                    <div class="mountain-graphic">
+                        <div class="sun"></div>
+                        <div class="mountain mountain-1"></div>
+                        <div class="mountain mountain-2"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');">
+                <div class="hero-content">
+                    <h1>Nuestra<br>Misión</h1>
+                    <p>Construyendo un futuro mejor para nuestras comunidades a través del trabajo conjunto y la dedicación constante.</p>
+                    <button class="hero-btn">CONOCER MÁS</button>
+                </div>
+                <div class="hero-graphic">
+                    <div class="mountain-graphic">
+                        <div class="sun"></div>
+                        <div class="mountain mountain-1"></div>
+                        <div class="mountain mountain-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');">
+                <div class="hero-content">
+                    <h1>Unidos<br>Avanzamos</h1>
+                    <p>La fuerza de nuestra organización radica en la unión de nuestros miembros y el compromiso compartido.</p>
+                    <button class="hero-btn">PARTICIPAR</button>
+                </div>
+                <div class="hero-graphic">
+                    <div class="mountain-graphic">
+                        <div class="sun"></div>
+                        <div class="mountain mountain-1"></div>
+                        <div class="mountain mountain-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-indicators">
+                <span class="hero-indicator active" data-slide="0"></span>
+                <span class="hero-indicator" data-slide="1"></span>
+                <span class="hero-indicator" data-slide="2"></span>
+            </div>
+        </div>
+
+        <!-- Content Section -->
+        <div class="content-section">
+            <div class="content-image">
+                <div class="content-carousel" id="contentCarousel1">
+                    <div class="content-slide active" style="background-image: url('https://images.unsplash.com/photo-1556075798-4825dfaaf498?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="content-slide" style="background-image: url('https://images.unsplash.com/photo-1515378960530-7c0da6231fb1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="content-slide" style="background-image: url('https://images.unsplash.com/photo-1504567961542-e24d9439a724?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="content-nav">
+                        <span class="content-indicator active" data-carousel="1" data-slide="0"></span>
+                        <span class="content-indicator" data-carousel="1" data-slide="1"></span>
+                        <span class="content-indicator" data-carousel="1" data-slide="2"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="content-text">
+                <h2>Nuestro Camino</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sapien, est felis, sagittis viverra nulla mattis scelerisque. Eget duis integer.</p>
+            </div>
+        </div>
+
+        <!-- Content Section 2 -->
+        <div class="content-section">
+            <div class="content-text">
+                <h2>Nuestra Historia</h2>
+                <p>Desde nuestros inicios, hemos trabajado incansablemente para fortalecer los lazos comunitarios y generar un impacto positivo en cada región donde tenemos presencia.</p>
+            </div>
+            <div class="content-image">
+                <div class="content-carousel" id="contentCarousel2">
+                    <div class="content-slide active" style="background-image: url('https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="content-slide" style="background-image: url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="content-slide" style="background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="content-nav">
+                        <span class="content-indicator active" data-carousel="2" data-slide="0"></span>
+                        <span class="content-indicator" data-carousel="2" data-slide="1"></span>
+                        <span class="content-indicator" data-carousel="2" data-slide="2"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Section 3 -->
+        <div class="content-section">
+            <div class="content-image">
+                <div class="content-carousel" id="contentCarousel3">
+                    <div class="content-slide active" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="content-slide" style="background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="content-slide" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="content-nav">
+                        <span class="content-indicator active" data-carousel="3" data-slide="0"></span>
+                        <span class="content-indicator" data-carousel="3" data-slide="1"></span>
+                        <span class="content-indicator" data-carousel="3" data-slide="2"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="content-text">
+                <h2>Nuestros Valores</h2>
+                <p>El compromiso, la solidaridad y el trabajo en equipo son los pilares fundamentales que nos guían en cada proyecto y nos permiten alcanzar nuestros objetivos.</p>
+            </div>
+        </div>
+
+        <!-- Community Carousel Section -->
+        <div class="community-section">
+            <div class="community-header">
+                <h2>Faenas Comunitarias</h2>
+            </div>
+            
+            <div class="community-carousel">
+                <div class="community-track" id="communityTrack">
+                    <div class="community-card">
+                        <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-title">FAENA 21/07/25 AURELIO</div>
+                            <div class="card-location">PUEBLA</div>
+                            <button class="card-btn">Evidencia</button>
+                        </div>
+                    </div>
+
+                    <div class="community-card">
+                        <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1504567961542-e24d9439a724?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-title">FAENA 21/07/25 BRANDON</div>
+                            <div class="card-location">CHOLULA</div>
+                            <button class="card-btn">Evidencia</button>
+                        </div>
+                    </div>
+
+                    <div class="community-card">
+                        <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-title">FAENA 21/07/25 VICTOR</div>
+                            <div class="card-location">ATLIXCO</div>
+                            <button class="card-btn">Evidencia</button>
+                        </div>
+                    </div>
+
+                    <div class="community-card">
+                        <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-title">FAENA 22/07/25 MARIA</div>
+                            <div class="card-location">TEHUACÁN</div>
+                            <button class="card-btn">Evidencia</button>
+                        </div>
+                    </div>
+
+                    <div class="community-card">
+                        <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-title">FAENA 22/07/25 CARLOS</div>
+                            <div class="card-location">HUAUCHINANGO</div>
+                            <button class="card-btn">Evidencia</button>
+                        </div>
+                    </div>
+                    <div class="community-card">
+                        <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-title">FAENA 22/07/25 CARLOS</div>
+                            <div class="card-location">HUAUCHINANGO</div>
+                            <button class="card-btn">Evidencia</button>
+                        </div>
+                    </div>
+                    <div class="community-card">
+                        <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-title">FAENA 22/07/25 CARLOS</div>
+                            <div class="card-location">HUAUCHINANGO</div>
+                            <button class="card-btn">Evidencia</button>
+                        </div>
+                    </div>
+                    <div class="community-card">
+                        <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-title">FAENA 22/07/25 CARLOS</div>
+                            <div class="card-location">HUAUCHINANGO</div>
+                            <button class="card-btn">Evidencia</button>
+                        </div>
+                    </div>
+
+                    <div class="community-card">
+                        <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-title">FAENA 23/07/25 ELENA</div>
+                            <div class="card-location">XICOTEPEC</div>
+                            <button class="card-btn">Evidencia</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="carousel-nav">
+                    <button class="nav-btn" id="prevBtn">‹</button>
+                    <button class="nav-btn" id="nextBtn">›</button>
+                </div>
+                
+                <!-- Video Section -->
+                <div class="video-section">
+                    <div class="video-container">
+                        <video controls poster="https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80">
+                            -<source src= type="video/mp4">
+                            
+                            Tu navegador no soporta el elemento de video.
+                        </video>
+                        <div class="video-overlay">
+                            <h3>Mira nuestro trabajo en acción</h3>
+                            <p>Descubre cómo transformamos nuestras comunidades</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <h3>Mexico</h3>
+        <h2>Armentista</h2>
+        <div class="footer-images">
+            <div class="footer-image">🏔️</div>
+            <div class="footer-image">⛰️</div>
+            <div class="footer-image">🗻</div>
+            <div class="footer-image">🌄</div>
+        </div>
+    </div>
+
+    <script>
+        // Hero Carousel
+        let currentHeroSlide = 0;
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        const heroIndicators = document.querySelectorAll('.hero-indicator');
+        const totalHeroSlides = heroSlides.length;
+        let heroAutoSlide;
+
+        function showHeroSlide(index) {
+            heroSlides.forEach((slide, i) => {
+                slide.classList.remove('active', 'prev');
+                if (i === index) {
+                    slide.classList.add('active');
+                } else if (i < index) {
+                    slide.classList.add('prev');
+                }
+            });
+            
+            heroIndicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+        }
+
+        function nextHeroSlide() {
+            currentHeroSlide = (currentHeroSlide + 1) % totalHeroSlides;
+            showHeroSlide(currentHeroSlide);
+        }
+
+        function startHeroAutoSlide() {
+            heroAutoSlide = setInterval(nextHeroSlide, 4000);
+        }
+
+        function stopHeroAutoSlide() {
+            clearInterval(heroAutoSlide);
+        }
+
+        // Hero indicators click
+        heroIndicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                currentHeroSlide = index;
+                showHeroSlide(currentHeroSlide);
+                stopHeroAutoSlide();
+                startHeroAutoSlide();
+            });
+        });
+
+        // Community Carousel
+        const communityTrack = document.getElementById('communityTrack');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let currentCommunitySlide = 0;
+        const cardsVisible = 3;
+        const totalCommunityCards = document.querySelectorAll('.community-card').length;
+        const maxSlides = Math.max(0, totalCommunityCards - cardsVisible);
+
+        function updateCommunityCarousel() {
+            const translateX = -(currentCommunitySlide * (100 / cardsVisible));
+            communityTrack.style.transform = `translateX(${translateX}%)`;
+            
+            prevBtn.disabled = currentCommunitySlide === 0;
+            nextBtn.disabled = currentCommunitySlide >= maxSlides;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentCommunitySlide > 0) {
+                currentCommunitySlide--;
+                updateCommunityCarousel();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentCommunitySlide < maxSlides) {
+                currentCommunitySlide++;
+                updateCommunityCarousel();
+            }
+        });
+
+        // Content Carousels
+        const contentCarousels = {
+            1: { current: 0, slides: [], indicators: [], auto: null },
+            2: { current: 0, slides: [], indicators: [], auto: null },
+            3: { current: 0, slides: [], indicators: [], auto: null }
+        };
+
+        function initContentCarousels() {
+            [1, 2, 3].forEach(carouselId => {
+                const carousel = document.getElementById(`contentCarousel${carouselId}`);
+                if (carousel) {
+                    contentCarousels[carouselId].slides = carousel.querySelectorAll('.content-slide');
+                    contentCarousels[carouselId].indicators = carousel.querySelectorAll('.content-indicator');
+                    
+                    // Add click listeners to indicators
+                    contentCarousels[carouselId].indicators.forEach((indicator, index) => {
+                        indicator.addEventListener('click', () => {
+                            showContentSlide(carouselId, index);
+                            resetContentAutoSlide(carouselId);
+                        });
+                    });
+                    
+                    // Start auto-slide
+                    startContentAutoSlide(carouselId);
+                }
+            });
+        }
+
+        function showContentSlide(carouselId, index) {
+            const carousel = contentCarousels[carouselId];
+            
+            carousel.slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            carousel.indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+            
+            carousel.current = index;
+        }
+
+        function nextContentSlide(carouselId) {
+            const carousel = contentCarousels[carouselId];
+            const nextIndex = (carousel.current + 1) % carousel.slides.length;
+            showContentSlide(carouselId, nextIndex);
+        }
+
+        function startContentAutoSlide(carouselId) {
+            contentCarousels[carouselId].auto = setInterval(() => {
+                nextContentSlide(carouselId);
+            }, 3000);
+        }
+
+        function stopContentAutoSlide(carouselId) {
+            clearInterval(contentCarousels[carouselId].auto);
+        }
+
+        function resetContentAutoSlide(carouselId) {
+            stopContentAutoSlide(carouselId);
+            startContentAutoSlide(carouselId);
+        }
+
+        // Electron Network Background
+        function createElectron(x, y, vx, vy, isPulse = false) {
+            const electron = document.createElement('div');
+            electron.className = isPulse ? 'electron pulse' : 'electron';
+            
+            electron.style.left = x + 'px';
+            electron.style.top = y + 'px';
+            electron.style.setProperty('--vx', vx);
+            electron.style.setProperty('--vy', vy);
+            electron.style.animationDelay = Math.random() * 20 + 's';
+            electron.style.animationDuration = (15 + Math.random() * 10) + 's';
+            
+            return electron;
+        }
+
+        function createNetworkNode(x, y) {
+            const node = document.createElement('div');
+            node.className = 'network-node';
+            node.style.left = x + 'px';
+            node.style.top = y + 'px';
+            node.style.animationDelay = Math.random() * 3 + 's';
+            return node;
+        }
+
+        function createConnectionLine(x1, y1, x2, y2) {
+            const line = document.createElement('div');
+            line.className = 'connection-line';
+            
+            const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+            
+            line.style.left = x1 + 'px';
+            line.style.top = y1 + 'px';
+            line.style.width = length + 'px';
+            line.style.transform = `rotate(${angle}deg)`;
+            line.style.animationDelay = Math.random() * 4 + 's';
+            
+            return line;
+        }
+
+        function createDataPacket(x, y) {
+            const packet = document.createElement('div');
+            packet.className = 'data-packet';
+            packet.style.left = x + 'px';
+            packet.style.top = y + 'px';
+            packet.style.animationDelay = Math.random() * 8 + 's';
+            
+            setTimeout(() => {
+                if (packet.parentNode) {
+                    packet.parentNode.removeChild(packet);
+                }
+            }, 8000);
+            
+            return packet;
+        }
+
+        function initElectronNetwork() {
+            const container = document.getElementById('atomsContainer');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            // Create network nodes
+            const nodes = [];
+            for (let i = 0; i < 15; i++) {
+                const x = Math.random() * width;
+                const y = Math.random() * height;
+                nodes.push({x, y});
+                
+                const node = createNetworkNode(x, y);
+                container.appendChild(node);
+            }
+            
+            // Create connections between nearby nodes
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const distance = Math.sqrt(
+                        Math.pow(nodes[j].x - nodes[i].x, 2) + 
+                        Math.pow(nodes[j].y - nodes[i].y, 2)
+                    );
+                    
+                    if (distance < 300) {
+                        const line = createConnectionLine(
+                            nodes[i].x + 4, nodes[i].y + 4,
+                            nodes[j].x + 4, nodes[j].y + 4
+                        );
+                        container.appendChild(line);
+                    }
+                }
+            }
+            
+            // Create floating electrons
+            for (let i = 0; i < 40; i++) {
+                const x = Math.random() * width;
+                const y = Math.random() * height;
+                const vx = (Math.random() - 0.5) * 2;
+                const vy = (Math.random() - 0.5) * 2;
+                const isPulse = Math.random() > 0.7;
+                
+                const electron = createElectron(x, y, vx, vy, isPulse);
+                container.appendChild(electron);
+            }
+            
+            // Create data packets
+            for (let i = 0; i < 20; i++) {
+                const x = Math.random() * width;
+                const y = Math.random() * height;
+                
+                const packet = createDataPacket(x, y);
+                container.appendChild(packet);
+            }
+        }
+
+        function addContinuousElectrons() {
+            const container = document.getElementById('atomsContainer');
+            
+            // Add new electrons
+            for (let i = 0; i < 2; i++) {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                const vx = (Math.random() - 0.5) * 2;
+                const vy = (Math.random() - 0.5) * 2;
+                const isPulse = Math.random() > 0.8;
+                
+                const electron = createElectron(x, y, vx, vy, isPulse);
+                container.appendChild(electron);
+                
+                setTimeout(() => {
+                    if (electron.parentNode) {
+                        electron.parentNode.removeChild(electron);
+                    }
+                }, 25000);
+            }
+            
+            // Add data packets
+            if (Math.random() > 0.7) {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                const packet = createDataPacket(x, y);
+                container.appendChild(packet);
+            }
+        }
+
+        // Initialize electron network
+        initElectronNetwork();
+
+        // Add continuous elements
+        setInterval(addContinuousElectrons, 1500);
+
+        // Recreate network on resize
+        window.addEventListener('resize', () => {
+            const container = document.getElementById('atomsContainer');
+            container.innerHTML = '';
+            setTimeout(initElectronNetwork, 100);
+        });
+
+        // Initialize content carousels
+        initContentCarousels();
+
+        // Pause content carousels on hover
+        [1, 2, 3].forEach(carouselId => {
+            const carousel = document.getElementById(`contentCarousel${carouselId}`);
+            if (carousel) {
+                carousel.addEventListener('mouseenter', () => stopContentAutoSlide(carouselId));
+                carousel.addEventListener('mouseleave', () => startContentAutoSlide(carouselId));
+            }
+        });
+
+        // Pause hero carousel on hover
+        document.querySelector('.hero-carousel').addEventListener('mouseenter', stopHeroAutoSlide);
+        document.querySelector('.hero-carousel').addEventListener('mouseleave', startHeroAutoSlide);
+
+        // Touch support for community carousel
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+
+        communityTrack.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+        });
+
+        communityTrack.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            currentX = e.touches[0].clientX;
+            e.preventDefault();
+        });
+
+        communityTrack.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            
+            const diffX = startX - currentX;
+            const threshold = 50;
+            
+            if (Math.abs(diffX) > threshold) {
+                if (diffX > 0 && currentCommunitySlide < maxSlides) {
+                    currentCommunitySlide++;
+                } else if (diffX < 0 && currentCommunitySlide > 0) {
+                    currentCommunitySlide--;
+                }
+                updateCommunityCarousel();
+            }
+            
+            isDragging = false;
+        });
+
+        // Responsive adjustments
+        function handleResize() {
+            const width = window.innerWidth;
+            let newCardsVisible;
+            
+            if (width <= 480) {
+                newCardsVisible = 1;
+            } else if (width <= 768) {
+                newCardsVisible = 2;
+            } else {
+                newCardsVisible = 3;
+            }
+            
+            if (newCardsVisible !== cardsVisible) {
+                const cardsVisible = newCardsVisible;
+                const maxSlides = Math.max(0, totalCommunityCards - cardsVisible);
+                currentCommunitySlide = Math.min(currentCommunitySlide, maxSlides);
+                updateCommunityCarousel();
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+    </script>
+</body>
+</html>
